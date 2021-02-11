@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "165880364734",
+    "firebase_url": "https://lebtrade-86cd2.firebaseio.com",
+    "project_id": "lebtrade-86cd2",
+    "storage_bucket": "lebtrade-86cd2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165880364734:android:fa2acd8ec97d84cb15a8ef",
+        "android_client_info": {
+          "package_name": "com.example.lebtrade"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165880364734-upivr2juka0ean2pkjimm63m8hr7n1hn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwJeXoOmj3L2YprkGX3zR0BInPeB4KV60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165880364734-upivr2juka0ean2pkjimm63m8hr7n1hn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
