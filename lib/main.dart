@@ -5,6 +5,7 @@ import 'package:lebtrade/loading.dart';
 import 'package:lebtrade/sign_in.dart';
 import 'package:lebtrade/register.dart';
 import 'package:lebtrade/services/auth.dart';
+import 'package:lebtrade/wrapper.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: key,
         routes: {
           '/loading': (context) => Loading(),
-          '/Login': (context) => SignIn(),
+          '/Login': (context) => WrapperLogin(),
           '/Register': (context) => Register(),
         },
         home: LoginRegister(),
