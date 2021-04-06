@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:lebtrade/loginOrRegister.dart';
 import 'package:lebtrade/models/user.dart';
 import 'package:lebtrade/loading.dart';
+import 'package:lebtrade/predict.dart';
 import 'package:lebtrade/sign_in.dart';
 import 'package:lebtrade/register.dart';
 import 'package:lebtrade/services/auth.dart';
 import 'package:lebtrade/wrapper.dart';
+import 'package:lebtrade/wrapperRegister.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/loading': (context) => Loading(),
           '/Login': (context) => WrapperLogin(),
-          '/Register': (context) => Register(),
+          '/Register': (context) => WrapperRegister(),
         },
         home: LoginRegister(),
       ),

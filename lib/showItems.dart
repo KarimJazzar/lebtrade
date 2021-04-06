@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:lebtrade/addItem.dart';
 import 'package:lebtrade/itemList.dart';
 import 'package:lebtrade/models/item.dart';
+import 'package:lebtrade/models/user.dart';
 import 'package:lebtrade/services/auth.dart';
 import 'package:lebtrade/services/database.dart';
 import 'package:provider/provider.dart';
 
-class ShowItemsHome extends StatelessWidget {
+class ShowItemsHome extends StatefulWidget {
+  User loggedIn;
+  ShowItemsHome({this.loggedIn});
+  @override
+  _ShowItemsHomeState createState() => _ShowItemsHomeState();
+}
+
+class _ShowItemsHomeState extends State<ShowItemsHome> {
   final AuthService _auth = AuthService();
+  String name;
+
   @override
   Widget build(BuildContext context) {
+    DatabaseService().infoCollection.document(widget.loggedIn.uid).get().then((value) async{
+      setState(() {
+        name = value.data["firstName"] + " " + value.data["lastName"];
+      });
+    });
 
     return StreamProvider<List<Item>>.value(
       value: DatabaseService().items,
@@ -42,6 +58,16 @@ class ShowItemsHome extends StatelessWidget {
                   ],
                 ),
               ),
+              RaisedButton.icon(onPressed: () {
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddItem(loggedIn: widget.loggedIn,),
+                    ));
+              }, icon: Icon(Icons.transit_enterexit), label: Text("Add an Item")),
+              Text("Logged in as $name",textAlign: TextAlign.end,style: TextStyle(fontSize: 14),),
+              SizedBox(height: 15,),
               Container(height: 1000,child: ItemList()),
             ],
           ),
