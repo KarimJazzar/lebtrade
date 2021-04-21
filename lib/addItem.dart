@@ -19,9 +19,9 @@ class AddItem extends StatefulWidget {
 }
 
 class _AddItemState extends State<AddItem> {
+  String estimate = "Estimate Price";
 
-
-  String name = "";
+  String name;
 
   int itemCondition = 0;
 
@@ -31,7 +31,9 @@ class _AddItemState extends State<AddItem> {
 
   String sub2 = "";
 
-  dynamic price = 0;
+  dynamic price = "Not specified";
+
+  String description = "";
 
   File _image;
   String _url;
@@ -47,16 +49,19 @@ class _AddItemState extends State<AddItem> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            BeautyTextfield(width: double.maxFinite, height: 50, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.text,
+            BeautyTextfield(width: double.maxFinite, height: 44, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.text,
             placeholder: "Enter name of Item",
-            backgroundColor: Colors.white70,
+            backgroundColor: Colors.white24,
+              accentColor: Colors.white70,
+            autofocus: true,
             textColor: Colors.black,
             onChanged: (text){
               name = text;
             },),
-            BeautyTextfield(width: double.maxFinite, height: 50, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.number,
-              placeholder: "Enter price of Item",
-              backgroundColor: Colors.white70,
+            BeautyTextfield(width: double.maxFinite, height: 44, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.text,
+              placeholder: "Trade For",
+              backgroundColor: Colors.white24,
+              accentColor: Colors.white70,
               textColor: Colors.black,
               onChanged: (item){
                 price = item;
@@ -89,19 +94,51 @@ class _AddItemState extends State<AddItem> {
                 sub2 = cat;
               },
             ),
+            BeautyTextfield(width: double.maxFinite, height: 44, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.text,
+              placeholder: "Enter description of Item",
+              backgroundColor: Colors.white24,
+              accentColor: Colors.white70,
+              textColor: Colors.black,
+              onChanged: (text){
+                description = text;
+              },),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 CircleAvatar(
                   backgroundImage: _image == null ? null : FileImage(_image),
                   radius: 80,
+                  backgroundColor: Colors.black,
                 ),
                 GestureDetector(onTap: pickImage, child: Icon(Icons.camera_alt))
               ],
             ),
+            ButtonTheme(
+              minWidth: 10,
+              height: 10,
+              child: RaisedButton.icon(
+                icon: Icon(Icons.analytics_rounded),
+                label: Text(estimate),
+                color: Colors.white70,
+                onPressed: ()async{
+                  final response=await http.post('http://10.0.2.2:5000/price',body:json.encode({'name': name,
+                    'con':itemCondition,
+                    'cat':generalCategory + "/" + sub1 + "/" + sub2,
+                    'brand':'',
+                    'shipping':0,
+                    'desc':description
+                  }));
+                  final decoded=json.decode(response.body) as Map<String, dynamic>;
+                  setState(() {
+                    String estimated =decoded['greetings'];
+                    estimate = estimated.substring(0,8);
+                  });
+                },
+              ),
+            ),
             RaisedButton.icon(onPressed: () async {
               await uploadImage(context);
-              await DatabaseService(uid: widget.loggedIn.uid).updateItem(name,widget.loggedIn.uid, itemCondition, generalCategory,sub1, sub2, price,"",_url);
+              await DatabaseService(uid: widget.loggedIn.uid).updateItem(name,widget.loggedIn.uid, itemCondition, generalCategory,sub1, sub2, price,description,_url);
               Navigator.pop(context);
 
             }, icon: Icon(Icons.transit_enterexit), label: Text("Add Item")),

@@ -1,7 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lebtrade/chatmessage.dart';
+import 'package:lebtrade/chatscreen.dart';
+import 'package:lebtrade/homepage.dart';
 import 'package:lebtrade/models/item.dart';
+import 'package:lebtrade/privatepage.dart';
 import 'package:lebtrade/services/database.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ItemDetails extends StatefulWidget {
   Item item;
@@ -13,8 +19,11 @@ class ItemDetails extends StatefulWidget {
 
 class _ItemDetailsState extends State<ItemDetails> {
   String name;
+  String estimate = "Estimate Price";
   @override
   Widget build(BuildContext context) {
+    String category = widget.item.cat1 + "/" + widget.item.cat2 + "/" + widget.item.cat3;
+
     DatabaseService().infoCollection.document(widget.item.userid).get().then((value) async{
       setState(() {
         name = value.data["firstName"] + " " + value.data["lastName"];
@@ -45,34 +54,34 @@ class _ItemDetailsState extends State<ItemDetails> {
         ),
       ),
           SizedBox(height: 8,),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text(
-              "Price input by user: \$${widget.item.price}",
-              style: TextStyle(fontSize: 16.0, color: Colors.black),
-            ),
-            SizedBox(
-              width: 8.0,
-            ),
-            SizedBox(
-              width: 8.0,
-            ),
-          ],
-        ),
-      ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Text(
-                  "Price estimated by the system: \$${widget.item.price}",
-                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                ButtonTheme(
+                  minWidth: 10,
+                  height: 10,
+                  child: RaisedButton.icon(
+                    icon: Icon(Icons.analytics_rounded),
+                    label: Text(estimate),
+                    color: Colors.white70,
+                    onPressed: ()async{
+                      final response=await http.post('http://10.0.2.2:5000/price',body:json.encode({'name': widget.item.name,
+                        'con':widget.item.condition,
+                        'cat':category,
+                        'brand':'',
+                        'shipping':0,
+                        'desc':widget.item.description
+                      }));
+                      final decoded=json.decode(response.body) as Map<String, dynamic>;
+                      setState(() {
+                        String estimated =decoded['greetings'];
+                        estimate = estimated.substring(0,8);
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: 8.0,
@@ -103,6 +112,25 @@ class _ItemDetailsState extends State<ItemDetails> {
             ),
           ),
           SizedBox(height: 8,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Text(
+                  "Trade For: ${widget.item.price}",
+                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+              ],
+            ),
+          ),
       Column(
         children: <Widget>[
         Container(
@@ -190,6 +218,38 @@ class _ItemDetailsState extends State<ItemDetails> {
                 Text(
                   "Item Description: ${widget.item.description}",
                   style: TextStyle(fontSize: 16.0, color: Colors.black),
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 8,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                ButtonTheme(
+                  minWidth: 10,
+                  height: 10,
+                  child: RaisedButton.icon(
+                    icon: Icon(Icons.message),
+                    label: Text("Chat with Owner"),
+                    color: Colors.white70,
+                    onPressed: (){
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage()
+                          ));
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: 8.0,

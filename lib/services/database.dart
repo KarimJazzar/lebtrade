@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lebtrade/models/item.dart';
+import 'package:lebtrade/models/message.dart';
 
 class DatabaseService {
 
@@ -9,6 +10,8 @@ class DatabaseService {
 
   final CollectionReference infoCollection = Firestore.instance.collection('User Info');
   final CollectionReference itemCollection = Firestore.instance.collection('Items');
+  final CollectionReference wishlistCollection = Firestore.instance.collection('Wishlist');
+
 
   Future<void> updateUserData(String firstName, String lastName) async {
     return await infoCollection.document(uid).setData({
@@ -28,6 +31,23 @@ class DatabaseService {
       'description': description,
       'imageUrl': imageUrl,
     });
+  }
+
+  Future<void> updateWishlist(String message, String name) async {
+    return await wishlistCollection.document(uid).setData({
+      'message': message,
+      'name': name,
+    });
+  }
+
+  List<Message> _wishListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return Message(
+          user: doc.documentID,
+          message: doc.data['message'],
+        name: doc.data['name']
+      );
+    }).toList();
   }
 
   List<Item> _itemListFromSnapshot(QuerySnapshot snapshot){
@@ -53,4 +73,10 @@ class DatabaseService {
   Stream<List<Item>> get items {
     return itemCollection.snapshots().map(_itemListFromSnapshot);
   }
+
+  Stream<List<Message>> get messages {
+    return wishlistCollection.snapshots().map(_wishListFromSnapshot);
+  }
+
+
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lebtrade/addItem.dart';
+import 'package:lebtrade/chatscreen.dart';
+import 'package:lebtrade/homepage.dart';
 import 'package:lebtrade/itemList.dart';
 import 'package:lebtrade/models/item.dart';
 import 'package:lebtrade/models/user.dart';
@@ -58,17 +60,29 @@ class _ShowItemsHomeState extends State<ShowItemsHome> {
                   ],
                 ),
               ),
-              RaisedButton.icon(onPressed: () {
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddItem(loggedIn: widget.loggedIn,),
-                    ));
-              }, icon: Icon(Icons.transit_enterexit), label: Text("Add an Item")),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton.icon(onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddItem(loggedIn: widget.loggedIn,),
+                        ));
+                  }, icon: Icon(Icons.transit_enterexit), label: Text("Add an Item")),
+                  SizedBox(width: 15,),
+                  RaisedButton.icon(onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(usrid: widget.loggedIn.uid,),
+                        ));
+                  }, icon: Icon(Icons.library_books_sharp), label: Text("Wish List")),
+                ],
+              ),
               Text("Logged in as $name",textAlign: TextAlign.end,style: TextStyle(fontSize: 14),),
               SizedBox(height: 15,),
-              Container(height: 1000,child: ItemList()),
+              Container(child: ItemList()),
             ],
           ),
         ),

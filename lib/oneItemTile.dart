@@ -2,13 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lebtrade/itemDetails.dart';
 import 'package:lebtrade/models/item.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class OneItemTile extends StatelessWidget {
+
+class OneItemTile extends StatefulWidget {
   final Item item;
   OneItemTile({this.item});
 
   @override
+  _OneItemTileState createState() => _OneItemTileState();
+}
+
+class _OneItemTileState extends State<OneItemTile> {
+  String estimate = "Estimate Price";
+  @override
   Widget build(BuildContext context) {
+
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -19,13 +30,14 @@ class OneItemTile extends StatelessWidget {
   }
 
   _buildProductItemCard(BuildContext context) {
+    String category = widget.item.cat1 + "/" + widget.item.cat2 + "/" + widget.item.cat3;
     return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ItemDetails(item: item,),
-            ));
+      onTap: () async{
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ItemDetails(item: widget.item),
+              ));
       },
       child: Card(
         elevation: 4.0,
@@ -35,7 +47,7 @@ class OneItemTile extends StatelessWidget {
           children: <Widget>[
             Container(
               child: Image.network(
-                item.imageUrl,
+                widget.item.imageUrl,
               ),
               height: 250.0,
               width: MediaQuery
@@ -55,19 +67,36 @@ class OneItemTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    item.name,
+                    widget.item.name,
                     style: TextStyle(fontSize: 16.0, color: Colors.grey),
                   ),
-                  SizedBox(
-                    height: 2.0,
-                  ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Text(
-                        "\$${item.price}",
-                        style: TextStyle(fontSize: 16.0, color: Colors.black),
+                      ButtonTheme(
+                        minWidth: 10,
+                        height: 10,
+                        child: RaisedButton.icon(
+                          icon: Icon(Icons.analytics_rounded),
+                          label: Text(estimate),
+                          color: Colors.white70,
+                          onPressed: ()async{
+                            final response=await http.post('http://10.0.2.2:5000/price',body:json.encode({'name': widget.item.name,
+                              'con':widget.item.condition,
+                              'cat':category,
+                              'brand':'',
+                              'shipping':0,
+                              'desc':widget.item.description
+                            }));
+                            final decoded=json.decode(response.body) as Map<String, dynamic>;
+                            setState(() {
+                              String estimated =decoded['greetings'];
+                              estimate = estimated.substring(0,8);
+                            });
+                          },
+                        ),
                       ),
                       SizedBox(
                         width: 8.0,
