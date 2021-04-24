@@ -23,6 +23,8 @@ class _AddItemState extends State<AddItem> {
 
   String name;
 
+  String brand=" ";
+
   int itemCondition = 0;
 
   String generalCategory = "";
@@ -33,7 +35,7 @@ class _AddItemState extends State<AddItem> {
 
   dynamic price = "Not specified";
 
-  String description = "";
+  String description = " ";
 
   File _image;
   String _url;
@@ -58,6 +60,18 @@ class _AddItemState extends State<AddItem> {
             onChanged: (text){
               name = text;
             },),
+
+            BeautyTextfield(width: double.maxFinite, height: 44, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.text,
+              placeholder: "Brand",
+              backgroundColor: Colors.white24,
+              accentColor: Colors.white70,
+              autofocus: true,
+              textColor: Colors.black,
+              onChanged: (text){
+                brand = text;
+              },),
+
+
             BeautyTextfield(width: double.maxFinite, height: 44, prefixIcon: Icon(Icons.article_rounded), inputType: TextInputType.text,
               placeholder: "Trade For",
               backgroundColor: Colors.white24,
@@ -88,7 +102,7 @@ class _AddItemState extends State<AddItem> {
               },
             ),
             DropDown(
-              items: ["Pants, Tights, Leggings", "Other", "Face", "T-Shirts", "Shoes", "Games", "Lips"],
+              items: ["Pants, Tights, Leggings", "Other", "Face", "T-Shirts", "Shoes", "Games", "Lips","Cell Phones & Smartphones"],
               hint: Text("Enter Sub-Category 2"),
               onChanged: (cat){
                 sub2 = cat;
@@ -124,21 +138,22 @@ class _AddItemState extends State<AddItem> {
                   final response=await http.post('http://10.0.2.2:5000/price',body:json.encode({'name': name,
                     'con':itemCondition,
                     'cat':generalCategory + "/" + sub1 + "/" + sub2,
-                    'brand':'',
+                    'brand':brand,
                     'shipping':0,
                     'desc':description
                   }));
                   final decoded=json.decode(response.body) as Map<String, dynamic>;
                   setState(() {
                     String estimated =decoded['greetings'];
-                    estimate = estimated.substring(0,8);
+                    estimate=estimated+"\$";
+                    //estimate = estimated.substring(0,8);
                   });
                 },
               ),
             ),
             RaisedButton.icon(onPressed: () async {
               await uploadImage(context);
-              await DatabaseService(uid: widget.loggedIn.uid).updateItem(name,widget.loggedIn.uid, itemCondition, generalCategory,sub1, sub2, price,description,_url);
+              await DatabaseService(uid: widget.loggedIn.uid).updateItem(name,widget.loggedIn.uid, itemCondition, generalCategory,sub1, sub2, brand, price,description,_url);
               Navigator.pop(context);
 
             }, icon: Icon(Icons.transit_enterexit), label: Text("Add Item")),

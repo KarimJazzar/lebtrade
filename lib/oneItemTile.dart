@@ -7,8 +7,9 @@ import 'dart:convert';
 
 
 class OneItemTile extends StatefulWidget {
+  String loggedIn;
   final Item item;
-  OneItemTile({this.item});
+  OneItemTile({this.item,this.loggedIn});
 
   @override
   _OneItemTileState createState() => _OneItemTileState();
@@ -36,7 +37,7 @@ class _OneItemTileState extends State<OneItemTile> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ItemDetails(item: widget.item),
+                builder: (context) => ItemDetails(item: widget.item,loggedIn: widget.loggedIn,),
               ));
       },
       child: Card(
@@ -86,14 +87,15 @@ class _OneItemTileState extends State<OneItemTile> {
                             final response=await http.post('http://10.0.2.2:5000/price',body:json.encode({'name': widget.item.name,
                               'con':widget.item.condition,
                               'cat':category,
-                              'brand':'',
+                              'brand':widget.item.brand,
                               'shipping':0,
                               'desc':widget.item.description
                             }));
                             final decoded=json.decode(response.body) as Map<String, dynamic>;
                             setState(() {
                               String estimated =decoded['greetings'];
-                              estimate = estimated.substring(0,8);
+                              estimate=estimated+"\$";
+                              //estimate = estimated.substring(0,8);
                             });
                           },
                         ),

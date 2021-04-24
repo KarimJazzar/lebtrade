@@ -4,6 +4,8 @@ import 'package:lebtrade/oneItemTile.dart';
 import 'package:provider/provider.dart';
 
 class ItemList extends StatefulWidget {
+  String loggedIn;
+  ItemList({this.loggedIn});
   @override
   _ItemListState createState() => _ItemListState();
 }
@@ -23,7 +25,7 @@ class _ItemListState extends State<ItemList> {
         shrinkWrap: true,
           itemCount: items.length,
           itemBuilder: (context,i){
-              return OneItemTile(item:items[i]);
+              return OneItemTile(item:items[i],loggedIn: widget.loggedIn,);
           }
       ),
     );

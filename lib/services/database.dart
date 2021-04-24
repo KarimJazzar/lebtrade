@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lebtrade/models/chatsmessage.dart';
 import 'package:lebtrade/models/item.dart';
 import 'package:lebtrade/models/message.dart';
 
@@ -11,7 +12,7 @@ class DatabaseService {
   final CollectionReference infoCollection = Firestore.instance.collection('User Info');
   final CollectionReference itemCollection = Firestore.instance.collection('Items');
   final CollectionReference wishlistCollection = Firestore.instance.collection('Wishlist');
-
+  final CollectionReference chatsCollection = Firestore.instance.collection('Chats');
 
   Future<void> updateUserData(String firstName, String lastName) async {
     return await infoCollection.document(uid).setData({
@@ -20,14 +21,15 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateItem(String name, String userId, int condition, String cat1, String cat2, String cat3, dynamic price, String description, String imageUrl) async {
+  Future<void> updateItem(String name, String userId, int condition, String cat1, String cat2, String cat3, String brand, String tradefor, String description, String imageUrl) async {
     return await itemCollection.document(name).setData({
       'userid': userId,
       'condition': condition,
       'cat1': cat1,
       'cat2': cat2,
       'cat3': cat3,
-      'price': price,
+      'brand': brand,
+      'tradefor': tradefor,
       'description': description,
       'imageUrl': imageUrl,
     });
@@ -40,12 +42,30 @@ class DatabaseService {
     });
   }
 
+  Future<void> updateChats(String contacts, String message1, String message2) async {
+    return await chatsCollection.document(contacts).setData({
+      'message1': message1,
+      'message2': message2,
+    });
+  }
+
+
   List<Message> _wishListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc){
       return Message(
           user: doc.documentID,
           message: doc.data['message'],
         name: doc.data['name']
+      );
+    }).toList();
+  }
+
+  List<ChatsMessage> _chatsFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return ChatsMessage(
+          contacts: doc.documentID,
+          message1: doc.data['message1'],
+          message2: doc.data['message2'],
       );
     }).toList();
   }
@@ -59,7 +79,8 @@ class DatabaseService {
           cat1: doc.data['cat1'],
           cat2: doc.data['cat2'],
           cat3: doc.data['cat3'],
-          price: doc.data['price'],
+          brand: doc.data['brand'],
+          tradefor: doc.data['tradefor'],
           description: doc.data['description'],
           imageUrl: doc.data['imageUrl']
       );
@@ -78,5 +99,7 @@ class DatabaseService {
     return wishlistCollection.snapshots().map(_wishListFromSnapshot);
   }
 
-
+  Stream<List<ChatsMessage>> get chatsmessages {
+    return chatsCollection.snapshots().map(_chatsFromSnapshot);
+  }
 }

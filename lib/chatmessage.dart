@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lebtrade/privatepage.dart';
+import 'package:lebtrade/files/privatepage.dart';
 
 class ChatMessage extends StatelessWidget {
   final String text;

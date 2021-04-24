@@ -1,17 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lebtrade/chatmessage.dart';
-import 'package:lebtrade/chatscreen.dart';
-import 'package:lebtrade/homepage.dart';
 import 'package:lebtrade/models/item.dart';
-import 'package:lebtrade/privatepage.dart';
+import 'package:lebtrade/files/privatepage.dart';
 import 'package:lebtrade/services/database.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+
 class ItemDetails extends StatefulWidget {
+  String loggedIn;
   Item item;
-  ItemDetails({this.item});
+  ItemDetails({this.item,this.loggedIn});
 
   @override
   _ItemDetailsState createState() => _ItemDetailsState();
@@ -19,6 +18,7 @@ class ItemDetails extends StatefulWidget {
 
 class _ItemDetailsState extends State<ItemDetails> {
   String name;
+  String loggedInName;
   String estimate = "Estimate Price";
   @override
   Widget build(BuildContext context) {
@@ -29,6 +29,13 @@ class _ItemDetailsState extends State<ItemDetails> {
         name = value.data["firstName"] + " " + value.data["lastName"];
       });
     });
+
+    DatabaseService().infoCollection.document(widget.loggedIn).get().then((value) async{
+      setState(() {
+        loggedInName = value.data["firstName"] + " " + value.data["lastName"];
+      });
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(234, 233, 226, 100),
@@ -71,14 +78,15 @@ class _ItemDetailsState extends State<ItemDetails> {
                       final response=await http.post('http://10.0.2.2:5000/price',body:json.encode({'name': widget.item.name,
                         'con':widget.item.condition,
                         'cat':category,
-                        'brand':'',
+                        'brand':widget.item.brand,
                         'shipping':0,
                         'desc':widget.item.description
                       }));
                       final decoded=json.decode(response.body) as Map<String, dynamic>;
                       setState(() {
                         String estimated =decoded['greetings'];
-                        estimate = estimated.substring(0,8);
+                        estimate=estimated+"\$";
+                        //estimate = estimated.substring(0,8);
                       });
                     },
                   ),
@@ -111,7 +119,6 @@ class _ItemDetailsState extends State<ItemDetails> {
               ],
             ),
           ),
-          SizedBox(height: 8,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
@@ -119,7 +126,26 @@ class _ItemDetailsState extends State<ItemDetails> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Text(
-                  "Trade For: ${widget.item.price}",
+                  "Trade For: ${widget.item.tradefor}",
+                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Text(
+                  "Item Condition: ${widget.item.condition}",
                   style: TextStyle(fontSize: 16.0, color: Colors.black),
                 ),
                 SizedBox(
@@ -246,7 +272,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePage()
+                            builder: (context) => PrivatePage(usertomessage: name,senderName: loggedInName,)
                           ));
                     },
                   ),
