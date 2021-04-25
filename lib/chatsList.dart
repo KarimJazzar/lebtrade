@@ -26,6 +26,7 @@ class _ChatsListState extends State<ChatsList> {
                 if(chatsmessages[i].contacts.contains(widget.receiver,1)){
                   int iend = chatsmessages[i].contacts.indexOf(widget.receiver);
                   return ButtonTheme(
+                    buttonColor: Colors.white24,
                     height: 40,
                     child: RaisedButton.icon(onPressed: () {
                       Navigator.push(

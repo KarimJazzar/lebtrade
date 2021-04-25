@@ -19,9 +19,9 @@ class _State extends State<Inbox> {
       value: DatabaseService().chatsmessages,
       child: Scaffold(
           appBar: AppBar(
-            title: Text("Inbox"),
+            title: Text("Inbox",style: TextStyle(color: Colors.black)),
             centerTitle: true,
-            backgroundColor: Colors.blueGrey,
+            backgroundColor: Color.fromRGBO(234, 233, 226, 100),
           ),
           body: ChatsList(receiver: widget.receiver,)
       ),
