@@ -1,5 +1,5 @@
 # lebtrade
-LebTrade Application:
+LebTrade Application.
 
 A new Flutter project.
 
