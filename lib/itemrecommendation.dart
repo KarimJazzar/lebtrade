@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lebtrade/addItem.dart';
-import 'package:lebtrade/chatscreen.dart';
 import 'package:lebtrade/homepage.dart';
 import 'package:lebtrade/inbox.dart';
 import 'package:lebtrade/itemList.dart';
@@ -10,14 +9,15 @@ import 'package:lebtrade/services/auth.dart';
 import 'package:lebtrade/services/database.dart';
 import 'package:provider/provider.dart';
 
-class ShowItemsHome extends StatefulWidget {
+class ItemRecommendation extends StatefulWidget {
   User loggedIn;
-  ShowItemsHome({this.loggedIn});
+  String trade;
+  ItemRecommendation({this.loggedIn,this.trade});
   @override
-  _ShowItemsHomeState createState() => _ShowItemsHomeState();
+  _ItemRecommendationState createState() => _ItemRecommendationState();
 }
 
-class _ShowItemsHomeState extends State<ShowItemsHome> {
+class _ItemRecommendationState extends State<ItemRecommendation> {
   final AuthService _auth = AuthService();
   String name;
 
@@ -34,7 +34,7 @@ class _ShowItemsHomeState extends State<ShowItemsHome> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(234, 233, 226, 100),
-          title: Text("Browse Items", style: TextStyle(color: Colors.black),),
+          title: Text("Items you may like", style: TextStyle(color: Colors.black),),
           centerTitle: true,
           actions: <Widget>[
             FlatButton.icon(
@@ -91,7 +91,7 @@ class _ShowItemsHomeState extends State<ShowItemsHome> {
               ),
               Text("Logged in as $name",textAlign: TextAlign.end,style: TextStyle(fontSize: 14),),
               SizedBox(height: 15,),
-              Container(child: ItemList(loggedIn: widget.loggedIn.uid,trade: "",)),
+              Container(child: ItemList(loggedIn: widget.loggedIn.uid,trade: widget.trade,)),
             ],
           ),
         ),

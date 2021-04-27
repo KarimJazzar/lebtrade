@@ -2,6 +2,7 @@ import 'package:beauty_textfield/beauty_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:http/http.dart' as http;
+import 'package:lebtrade/itemrecommendation.dart';
 import 'dart:convert';
 import 'package:lebtrade/models/user.dart';
 import 'package:lebtrade/services/database.dart';
@@ -23,7 +24,7 @@ class _AddItemState extends State<AddItem> {
 
   String name;
 
-  String brand=" ";
+  String brand="";
 
   int itemCondition = 0;
 
@@ -35,7 +36,7 @@ class _AddItemState extends State<AddItem> {
 
   dynamic price = "Not specified";
 
-  String description = " ";
+  String description = "";
 
   File _image;
   String _url;
@@ -81,10 +82,28 @@ class _AddItemState extends State<AddItem> {
                 price = item;
               },),
             DropDown(
-              items: [1, 2, 3, 4, 5],
+              items: ["New", "Used-like new", "Used-good condition", "Used-acceptable condition", "Used"],
               hint: Text("Enter Item Condition"),
               onChanged: (cond){
-                itemCondition = cond;
+                var stat=2;
+                if (cond=="New"){stat=1;}
+                else if (cond=="Used-like new")
+                {
+                  stat=2;
+                }
+                else if (cond=="Used-good condition")
+                {
+                  stat=3;
+                }
+                else if (cond=="Used-acceptable condition")
+                {
+                  stat=4;
+                }
+                else if (cond=="Used")
+                {
+                  stat=5;
+                }
+                itemCondition = stat;
               },
             ),
             DropDown(
@@ -95,14 +114,14 @@ class _AddItemState extends State<AddItem> {
               },
             ),
             DropDown(
-              items: ["Athletic Apparel", "Makeup", "Top & Blouses", "Shoes", "Jewelry", "Tops", "Cell Phones & Accessories"],
+              items: ["Athletic Apparel", "Makeup", "Computers & Tablets","TV, Audio & Surveillance", "Top & Blouses", "Shoes", "Jewelry", "Tops", "Cell Phones & Accessories"],
               hint: Text("Enter Sub-Category 1"),
               onChanged: (cat){
                 sub1 = cat;
               },
             ),
             DropDown(
-              items: ["Pants, Tights, Leggings", "Other", "Face", "T-Shirts", "Shoes", "Games", "Lips","Cell Phones & Smartphones"],
+              items: ["Pants, Tights, Leggings", "Laptops & Netbooks","Headphones","Other", "Face", "T-Shirts", "Shoes", "Games", "Cell Phone Accessories","Lips","Cell Phones & Smartphones"],
               hint: Text("Enter Sub-Category 2"),
               onChanged: (cat){
                 sub2 = cat;
@@ -121,7 +140,8 @@ class _AddItemState extends State<AddItem> {
               children: <Widget>[
                 CircleAvatar(
                   backgroundImage: _image == null ? null : FileImage(_image),
-                  radius: 80,
+                  //child: Image.network("https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-12-red-select-2020?wid=940&hei=1112&fmt=png-alpha&qlt=80&.v=1604343703000",height: 220,),
+                  radius: 75,
                   backgroundColor: Colors.black,
                 ),
                 GestureDetector(onTap: pickImage, child: Icon(Icons.camera_alt))
@@ -155,7 +175,11 @@ class _AddItemState extends State<AddItem> {
               await uploadImage(context);
               await DatabaseService(uid: widget.loggedIn.uid).updateItem(name,widget.loggedIn.uid, itemCondition, generalCategory,sub1, sub2, brand, price,description,_url);
               Navigator.pop(context);
-
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemRecommendation(loggedIn: widget.loggedIn,trade: price,),
+                  ));
             }, icon: Icon(Icons.transit_enterexit), label: Text("Add Item")),
           ],
         ),

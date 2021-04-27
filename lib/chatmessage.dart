@@ -29,7 +29,7 @@ class ChatMessage extends StatelessWidget {
                 Navigator.push(
                   context,
                   //here we specify what user to message
-                  MaterialPageRoute(builder: (context)=>PrivatePage(usertomessage: 'abdallah',),));
+                  MaterialPageRoute(builder: (context)=>PrivatePage(usertomessage: username,senderName: 'hussam younes',),));
 
                 },
                 child: CircleAvatar(

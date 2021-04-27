@@ -19,10 +19,21 @@ class ItemDetails extends StatefulWidget {
 class _ItemDetailsState extends State<ItemDetails> {
   String name;
   String loggedInName;
+  String constring;
   String estimate = "Estimate Price";
   @override
   Widget build(BuildContext context) {
     String category = widget.item.cat1 + "/" + widget.item.cat2 + "/" + widget.item.cat3;
+    if (widget.item.condition==1)
+      {constring="New";}
+    else if (widget.item.condition==2)
+    {constring="Used- like new";}
+    else if (widget.item.condition==3)
+    {constring="Used- good condition";}
+    else if (widget.item.condition==4)
+    {constring="Used- acceptable condition";}
+    else if (widget.item.condition==5)
+    {constring="Used";}
 
     DatabaseService().infoCollection.document(widget.item.userid).get().then((value) async{
       setState(() {
@@ -145,7 +156,8 @@ class _ItemDetailsState extends State<ItemDetails> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Text(
-                  "Item Condition: ${widget.item.condition}",
+                  "Item Condition: ${constring}",
+                  //${widget.item.condition}
                   style: TextStyle(fontSize: 16.0, color: Colors.black),
                 ),
                 SizedBox(
