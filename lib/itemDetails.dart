@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lebtrade/models/item.dart';
 import 'package:lebtrade/files/privatepage.dart';
+import 'package:lebtrade/models/message.dart';
 import 'package:lebtrade/services/database.dart';
 import 'package:http/http.dart' as http;
+import 'package:mailer/mailer.dart' as mail;
 import 'dart:convert';
+import 'package:mailer/smtp_server.dart';
 
 
 class ItemDetails extends StatefulWidget {
@@ -52,6 +55,45 @@ class _ItemDetailsState extends State<ItemDetails> {
         backgroundColor: Color.fromRGBO(234, 233, 226, 100),
         title: Text("Item Details", style: TextStyle(color: Colors.black),),
         centerTitle: true,
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.warning),
+            label: Text('Report'),
+            onPressed: () async {
+              String username = 'lebtrade@hotmail.com';
+              String password = 'karim123_';
+
+              final smtpServer = hotmail(username, password);
+
+              final message = mail.Message()
+                ..from = mail.Address(username, "LebTrade")
+                ..recipients.add('kaj11@mail.aub.edu')
+                ..recipients.add('hfy01@mail.aub.edu')
+                ..recipients.add('aei02@mail.aub.edu')
+                ..subject = 'A User has been reported'
+                ..html = "<h1>A User has been reported</h1>\n<p>Dear Administrator,</p>\n<p>Please note that the user $name has been reported.</p><p>Please check as to why he has been reported.</p>\n<p>"
+                  ;
+
+              try {
+                final sendReport = await mail.send(message, smtpServer);
+                print('Message sent: ' + sendReport.toString());
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Report Successful! The LebTrade team has been notified.",textAlign: TextAlign.center,),
+                  duration: Duration(seconds: 6),
+                  backgroundColor: Colors.blue,
+                ));
+              } on mail.MailerException catch (e) {
+                print('Message not sent.');
+                for (var p in e.problems) {
+                  print('Problem: ${p.code}: ${p.msg}');
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("An Error Occurred."),
+                  ));
+                }
+              }
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [

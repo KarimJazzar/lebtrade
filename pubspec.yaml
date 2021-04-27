@@ -36,6 +36,7 @@ dependencies:
   path: ^1.7.0
   permission_handler: 4.4.0+hotfix.4
   image_downloader: ^0.20.1
+  mailer: ^3.0.4
 
 
 
