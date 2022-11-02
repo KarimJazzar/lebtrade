@@ -1,5 +1,6 @@
-# lebtrade
-LebTrade Application.
+# LebTrade
+
+An eCommerce trading application built using Flutter and Firebase. 
 
 Login
 
